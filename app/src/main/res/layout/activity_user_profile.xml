@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="nityam.com.fitlife.UserProfile"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_launcher"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ASH KETCHUM"
+            android:layout_marginTop="@dimen/margLeft"
+            android:textSize="@dimen/Heading1"
+            />
+
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gender"
+            android:layout_marginLeft="@dimen/margLeft"/>
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/genderSpinner"
+            android:entries="@array/gender"
+            android:layout_marginLeft="@dimen/margLeft">
+
+        </Spinner>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Weight"
+            android:layout_marginLeft="@dimen/margLeft"
+            />
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margLeft"
+            android:text="160"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margLeft"
+            android:text="lbs"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_marginTop="@dimen/Heading1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margLeft"
+        android:text="AVERAGE/ WEEKLY"
+        android:textSize="@dimen/fab_margin" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1">
+        <TableRow>
+            <TextView
+                android:text="Distance"
+                android:padding="3dip" />
+            <TextView
+                android:text="0.0 Km"
+                android:gravity="right"
+                android:id="@+id/userDistanceAvg"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="Time"
+
+                android:padding="3dip" />
+            <TextView
+                android:text="0:00:00"
+                android:gravity="right"
+                android:id="@+id/timeAvg"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="Workout"
+                android:padding="3dip" />
+            <TextView
+                android:text="0 Times"
+                android:gravity="right"
+                android:id="@+id/workoutCountAvg"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="Calories Burnt"
+                android:padding="3dip" />
+            <TextView
+                android:text="1000 Cal"
+                android:gravity="right"
+                android:id="@+id/caloriesAvg"
+                android:padding="3dip" />
+        </TableRow>
+
+    </TableLayout>
+
+    <TextView
+        android:layout_marginTop="@dimen/Heading1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margLeft"
+        android:text="ALL TIME"
+        android:textSize="@dimen/fab_margin" />
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1">
+        <TableRow>
+            <TextView
+                android:text="Distance"
+                android:padding="3dip" />
+            <TextView
+                android:text="0.0 Km"
+                android:gravity="right"
+                android:id="@+id/userDistanceAll"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="Time"
+                android:padding="3dip" />
+            <TextView
+                android:text="0:00:00"
+                android:gravity="right"
+                android:id="@+id/timeAll"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="Workout"
+                android:padding="3dip" />
+            <TextView
+                android:text="0 Times"
+                android:gravity="right"
+                android:id="@+id/workoutCountAll"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="Calories Burnt"
+                android:padding="3dip" />
+            <TextView
+                android:text="1000 Cal"
+                android:id="@+id/caloriesAll"
+                android:gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+    </TableLayout>
+
+</LinearLayout>
