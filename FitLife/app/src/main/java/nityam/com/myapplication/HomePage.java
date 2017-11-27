@@ -3,10 +3,15 @@ package nityam.com.myapplication;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,7 +24,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class HomePage extends FragmentActivity implements OnMapReadyCallback {
+public class HomePage extends FragmentActivity implements OnMapReadyCallback, SensorEventListener {
     private GoogleMap mMap;
     private boolean isWorkingOut = false;
     private Button workout;
@@ -40,8 +45,7 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback {
 
         Configuration config = getResources().getConfiguration();
         if(config.orientation == config.ORIENTATION_LANDSCAPE){
-            Intent intent = new Intent(this, DetailView.class);
-            startActivity(intent);
+            gotoDetail(this);
         }
 
         workout = (Button) findViewById(R.id.workout);
@@ -49,6 +53,30 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback {
         time = (TextView) findViewById(R.id.time);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("<NITYAM>", "onPause: ");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("<NITYAM>", "onStop: ");
+        if(isWorkingOut){
+            handler.postDelayed(runnable, 0);
+        }
+        sManager.unregisterListener(this, stepSensor);
+    }
+
+    @Override
+    protected void onResume() {
+
+        super.onResume();
+
+        sManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_FASTEST);
+
+    }
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -63,6 +91,11 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback {
             Intent intent = new Intent(this, UserProfile.class);
             startActivity(intent);
         }
+
+    public void gotoDetail(HomePage view){
+            Intent intent = new Intent(this, DetailPage.class);
+            startActivity(intent);
+    }
 
     public void btnActivityClicked(View view) {
         if(!isWorkingOut){
@@ -124,4 +157,13 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback {
 
     };
 
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
 }
