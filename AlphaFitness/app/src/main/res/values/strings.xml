@@ -1,8 +1,0 @@
-<resources>
-    <string name="app_name">AlphaFitness</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Portrait</string>
-    <string name="record_workout">Record Workout</string>
-    <string name="title_activity_maps">Map</string>
-</resources>

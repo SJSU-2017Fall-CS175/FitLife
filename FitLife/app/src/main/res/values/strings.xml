@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Alpha Fitness</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_detail_view">DetailView</string>
+</resources>

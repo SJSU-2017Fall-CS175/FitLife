@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="Heading1">35sp</dimen>
+    <dimen name="margLeft">20dp</dimen>
+    <dimen name="margBigLeft">160dp</dimen>
+    <dimen name="margBigLeft2">130dp</dimen>
+</resources>
