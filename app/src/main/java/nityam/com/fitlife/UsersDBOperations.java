@@ -138,6 +138,19 @@ public class UsersDBOperations {
         return allUserData;
     }
 
+    public Long getLastUser(){
+        Cursor cursor = database.query(UserDBHandler.TABLE_USER_DATA, allUserDataColumns,
+                null,null,null, null, null);
+        cursor.moveToLast();
+        User user = new User(Long.parseLong(cursor.getString(0)),
+                cursor.getString(1),
+                cursor.getString(2),
+                Float.parseFloat(cursor.getString(3)));
+
+        cursor.close();
+
+        return user.getmId();
+    }
     //Get a single user
     public User getUser(long id) {
         Cursor cursor = database.query(UserDBHandler.TABLE_USERS, allUserColumns,
@@ -174,4 +187,6 @@ public class UsersDBOperations {
         database.delete(UserDBHandler.TABLE_USERS,
                 UserDBHandler.COLUMN_ID + "=" + user.getmId(), null);
     }
+
+
 }

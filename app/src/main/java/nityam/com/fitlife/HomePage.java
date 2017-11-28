@@ -25,6 +25,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.text.DecimalFormat;
+import java.util.Random;
+
 public class HomePage extends FragmentActivity implements OnMapReadyCallback, SensorEventListener {
     private GoogleMap mMap;
     private boolean isWorkingOut = false;
@@ -39,11 +42,13 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
     private UserData mUserData;
 
     private TextView distance;
+    Random rn;
 
     SensorManager sManager;
     Sensor stepSensor;
 
     Handler handler;
+    DecimalFormat df;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +74,12 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
 
         mUserData = new UserData();
         mUserOps = new UsersDBOperations(this);
+        mUserOps.open();
+        rn = new Random();
+
+        df = new DecimalFormat();
+        df.setMaximumFractionDigits(2);
+
     }
 
     @Override
@@ -82,6 +93,8 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
         super.onStop();
         Log.d("<NITYAM>", "onStop: ");
         sManager.unregisterListener(this, stepSensor);
+        handler.removeCallbacks(writeToDBRunnable);
+        mUserOps.close();
     }
 
     @Override
@@ -117,15 +130,20 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
             // need to stop now
             workout.setText("STOP WORKOUT");
             workout.setBackgroundColor(Color.RED);
+            workout.setTextColor(Color.WHITE);
             isWorkingOut = true;
 
 
             StartTime = SystemClock.uptimeMillis();
             handler.postDelayed(runnable, 0);
+            handler.removeCallbacks(writeToDBRunnable);
+
+
 
         }else{
             workout.setText("START WORKOUT");
             workout.setBackgroundColor(Color.GREEN);
+            workout.setTextColor(Color.BLACK);
             isWorkingOut = false;
 
             handler.removeCallbacks(runnable);
@@ -144,7 +162,13 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
 
 
             time.setText("0:00:00");
+            //randomize steps
+            this.steps = 10 + rn.nextInt(4000 - 5 +1);//debug
+//            Log.d("<NITYAMsteps++>", Long.toString(steps));
 
+            distance.setText(df.format(getDistanceRun())); //should be on runnable
+
+            handler.postDelayed(writeToDBRunnable, 0);
         }
     }
 
@@ -164,7 +188,7 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
         }
     }
 
-    public float getDistanceRun(long steps){
+    public float getDistanceRun(){
         float distance = (float)(steps*78)/(float)100000;
         return distance;
     }
@@ -195,7 +219,8 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
                     + String.format("%03d", MilliSeconds));
 
 
-            distance.setText(Double.toString(getDistanceRun(steps)));
+
+//            distance.setText(df.format(getDistanceRun()));
 
             handler.postDelayed(this, 0);
         }
@@ -206,7 +231,8 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
         public void run() {
 
             final int CALORIES_BURNED_PER_2000_STEPS = 120;
-            Float distanceRan = getDistanceRun(steps);
+            Float distanceRan = getDistanceRun();
+            Log.d("<NITYAMdistance>", distanceRan.toString());
             Float workoutTime = 5f;
             numWorkouts++;
             Float workoutCalories = getCalories();
