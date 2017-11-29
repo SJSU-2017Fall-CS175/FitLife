@@ -194,5 +194,17 @@ public class UsersDBOperations {
                 UserDBHandler.COLUMN_ID + "=" + user.getmId(), null);
     }
 
+    public void clearDatabase(int lastId){
+        for(int i = 1; i<=lastId; i++){
+            database.delete(UserDBHandler.TABLE_USERS,
+                    UserDBHandler.COLUMN_ID + "=" + i, null);
+        }
+    }
+    public void clearUserData()
+    {
+        database.delete(UserDBHandler.TABLE_USER_DATA,
+                UserDBHandler.COLUMN_ID + ">=" + 1, null);
+    }
+
 
 }

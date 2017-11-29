@@ -58,7 +58,7 @@ public class UserProfile extends FragmentActivity {
 
 //        Toast.makeText(this, "Start value: "+ Boolean.toString(begStart), Toast.LENGTH_SHORT).show();
 
-        mSavedUser = operations.getUser(1);
+//        mSavedUser = operations.getUser(1);
 //       if(!begStart){
            getUserInfo();
            getWeekData();
