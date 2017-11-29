@@ -148,8 +148,24 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
             isWorkingOut = false;
 
             handler.removeCallbacks(runnable);
-            String ans = "Total Workout = "+Integer.toString(Minutes) + "mins " + Integer.toString(Seconds) + " secs";
+
+//            this.steps = 67*Minutes + (int)(1.16 * Seconds);
+                this.steps = 67*Seconds + Minutes;
+
+            String ans = "Total Workout = "+Integer.toString(Minutes) + "mins " + Integer.toString(Seconds) + " secs with steps: "+steps;
             Toast.makeText(this, ans , Toast.LENGTH_SHORT).show();
+
+            //randomize steps
+//            this.steps = 10 + rn.nextInt(4000 - 5 +1);//debug
+
+
+
+//            Log.d("<NITYAMsteps++>", Long.toString(steps));
+
+            distance.setText(df.format(getDistanceRun())); //should be on runnable
+
+            handler.postDelayed(writeToDBRunnable, 0);
+
 
             MillisecondTime = 0L ;
             StartTime = 0L ;
@@ -163,13 +179,6 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
 
 
             time.setText("0:00:00");
-            //randomize steps
-            this.steps = 10 + rn.nextInt(4000 - 5 +1);//debug
-//            Log.d("<NITYAMsteps++>", Long.toString(steps));
-
-            distance.setText(df.format(getDistanceRun())); //should be on runnable
-
-            handler.postDelayed(writeToDBRunnable, 0);
         }
     }
 

@@ -89,17 +89,37 @@ public class UserProfile extends FragmentActivity {
     private void getUserInfo() {
 //        long number = operations.getLastUser();
 //        Toast.makeText(this, "Last user number: "+Long.toString(number), Toast.LENGTH_SHORT).show();
-        User myCurrentUser = operations.getUser(8);
-        name.setText(myCurrentUser.getmName());
-        String gender = myCurrentUser.getmGender();
-        if (gender.equalsIgnoreCase("Male")) {
-            genderSpinner.setSelection(0);
-        } else {
-            genderSpinner.setSelection(1);
+        User myCurrentUser = null;
+       try
+       {
+           myCurrentUser = operations.getUser(1);
+           Log.d("<NITYAM>UP_CurrUsr", "getUserInfo: getting id 1");
+       }
+       catch(Exception e){
+           Log.d("<NITYAM>UP_EXCEP", "getUserInfo: "+e.toString());
+           myCurrentUser = new User();
+           myCurrentUser.setmId(1);
+           myCurrentUser.setmGender("male");
+           myCurrentUser.setmName("Ash Ketchum");
+           myCurrentUser.setmWeight(100);
         }
-        weight.setText(String.valueOf(myCurrentUser.getmWeight()));
+        finally {
+           if(myCurrentUser!=null) {
+               name.setText(myCurrentUser.getmName());
+               String gender = myCurrentUser.getmGender();
+               if (gender.equalsIgnoreCase("Male")) {
+                   genderSpinner.setSelection(0);
+               } else {
+                   genderSpinner.setSelection(1);
+               }
+               weight.setText(String.valueOf(myCurrentUser.getmWeight()));
 
-        begStart = false;
+               begStart = false;
+           }
+           else{
+               Log.d("<NITYAM>UP_CurrUsr"," CUrrent user is null");
+           }
+       }
     }
 
     private void saveInfo() {
