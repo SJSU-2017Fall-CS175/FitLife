@@ -185,12 +185,14 @@
 
     </TableLayout>
 
-    <!--<Button-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="SAVE"-->
-        <!--android:id="@+id/profileSave"-->
-        <!--android:background="@color/Green"-->
-        <!--android:onClick="saveInfo"/>-->
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Clear Data"
+        android:id="@+id/profileSave"
+        android:background="#ff0000"
+        android:textColor="#ffffff"
+        android:onClick="clearData"
+        tools:ignore="OnClick" />
 
 </LinearLayout>

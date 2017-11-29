@@ -128,7 +128,17 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
 
     public void btnActivityClicked(View view) {
         if(!isWorkingOut){
-            // need to stop now
+            // i'm working out now
+            MillisecondTime = 0L ;
+            StartTime = 0L ;
+            TimeBuff = 0L ;
+            UpdateTime = 0L ;
+            Seconds = 0 ;
+            Minutes = 0 ;
+            MilliSeconds = 0 ;
+
+            steps = 0;
+
             workout.setText("STOP WORKOUT");
             workout.setBackgroundColor(Color.RED);
             workout.setTextColor(Color.WHITE);
@@ -142,6 +152,7 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
 
 
         }else{
+            // i've stoped my workout
             workout.setText("START WORKOUT");
             workout.setBackgroundColor(Color.GREEN);
             workout.setTextColor(Color.BLACK);
@@ -150,7 +161,7 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
             handler.removeCallbacks(runnable);
 
 //            this.steps = 67*Minutes + (int)(1.16 * Seconds);
-                this.steps = 67*Seconds + Minutes;
+                this.steps = 67*Seconds + 67*10*Minutes;
 
             String ans = "Total Workout = "+Integer.toString(Minutes) + "mins " + Integer.toString(Seconds) + " secs with steps: "+steps;
             Toast.makeText(this, ans , Toast.LENGTH_SHORT).show();
@@ -165,18 +176,6 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
             distance.setText(df.format(getDistanceRun())); //should be on runnable
 
             handler.postDelayed(writeToDBRunnable, 0);
-
-
-            MillisecondTime = 0L ;
-            StartTime = 0L ;
-            TimeBuff = 0L ;
-            UpdateTime = 0L ;
-            Seconds = 0 ;
-            Minutes = 0 ;
-            MilliSeconds = 0 ;
-
-            steps = 0;
-
 
             time.setText("0:00:00");
         }

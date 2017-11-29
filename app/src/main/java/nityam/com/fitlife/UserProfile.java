@@ -3,6 +3,7 @@ package nityam.com.fitlife;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -225,5 +226,10 @@ public class UserProfile extends FragmentActivity {
         seconds = (seconds % 3600) % 60;
 
         return days + " day " + hours + " hr " + minutes + " min " + seconds + " sec";
+    }
+
+    public void clearData(View view) {
+//        operations.clearUserData();
+        Toast.makeText(this, "DATA CLEARED", Toast.LENGTH_SHORT).show();
     }
 }
