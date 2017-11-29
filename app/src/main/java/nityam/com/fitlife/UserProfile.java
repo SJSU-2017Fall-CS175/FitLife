@@ -93,16 +93,18 @@ public class UserProfile extends FragmentActivity {
         User myCurrentUser = null;
        try
        {
-           myCurrentUser = operations.getUser(1);
-           Log.d("<NITYAM>UP_CurrUsr", "getUserInfo: getting id 1");
+           myCurrentUser = operations.getUser(12);
+           Log.d("<NITYAM>UP_CurrUsr", "getUserInfo: getting id 12");
        }
        catch(Exception e){
-           Log.d("<NITYAM>UP_EXCEP", "getUserInfo: "+e.toString());
+           Log.d("<NITYAM>UP_Exec", "getUserInfo: "+e.toString());
            myCurrentUser = new User();
            myCurrentUser.setmId(1);
            myCurrentUser.setmGender("male");
            myCurrentUser.setmName("Ash Ketchum");
            myCurrentUser.setmWeight(100);
+           User done = operations.addUser(myCurrentUser);
+           Log.d("<NITYAM>UP_Exec", "adding new user info "+ done.getmId());
         }
         finally {
            if(myCurrentUser!=null) {
@@ -132,7 +134,7 @@ public class UserProfile extends FragmentActivity {
         if (!weight.getText().toString().isEmpty()) {
             user.setmWeight(Float.parseFloat(weight.getText().toString()));
         }
-        user.setmId(8);
+        user.setmId(12);
         operations.updateUser(user);
         Toast.makeText(this, "User " + user.getmName() + " updated", Toast.LENGTH_SHORT).show();
 
@@ -229,7 +231,10 @@ public class UserProfile extends FragmentActivity {
     }
 
     public void clearData(View view) {
-//        operations.clearUserData();
+        operations.clearUserData();
+
         Toast.makeText(this, "DATA CLEARED", Toast.LENGTH_SHORT).show();
+        getWeekData();
+        getAllData();
     }
 }
