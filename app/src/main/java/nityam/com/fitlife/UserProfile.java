@@ -2,7 +2,6 @@ package nityam.com.fitlife;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.view.View;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +23,9 @@ public class UserProfile extends FragmentActivity {
     TextView timeAll;
     TextView caloriesAll;
     TextView workoutCountAll;
-    boolean freshopen;
+    boolean begStart = true;
+
+    User mSavedUser;
 
 
     User user;
@@ -54,42 +55,79 @@ public class UserProfile extends FragmentActivity {
 
         sName = name.getText().toString();
 
-        Toast.makeText(this, "Fresh value: "+ Boolean.toString(freshopen), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Start value: "+ Boolean.toString(begStart), Toast.LENGTH_SHORT).show();
 
-       if(!freshopen){
+        mSavedUser = operations.getUser(1);
+//       if(!begStart){
            getUserInfo();
            getWeekData();
            getAllData();
-       }
+//       }
         //need to add spinner Gender
 
         // need to read from db as well
 
     }
 
-    private void getUserInfo(){
-
-//        Long number = operations.getLastUser();
-//        Toast.makeText(this, Long.toString(number), Toast.LENGTH_SHORT).show();
-
-        User myCurrentUser = operations.getUser(1);
-        if(myCurrentUser == null){
-
-        }else{
-            name.setText(myCurrentUser.getmName());
-            String gender = myCurrentUser.getmGender();
-            if (gender.equalsIgnoreCase("Male")) {
-                genderSpinner.setSelection(0);
-            } else {
-                genderSpinner.setSelection(1);
-            }
-            weight.setText(String.valueOf(myCurrentUser.getmWeight()));
-        }
-
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        operations.close();
     }
 
-    private void getWeekData(){
+    @Override
+    public void onBackPressed() {
+            saveInfo();
+
+//        Intent intent = new Intent(this, Fitness_HomeScreen.class);
+//        startActivity(intent);
+        finish();
+    }
+
+    private void getUserInfo() {
+//        long number = operations.getLastUser();
+//        Toast.makeText(this, "Last user number: "+Long.toString(number), Toast.LENGTH_SHORT).show();
+        User myCurrentUser = operations.getUser(8);
+        name.setText(myCurrentUser.getmName());
+        String gender = myCurrentUser.getmGender();
+        if (gender.equalsIgnoreCase("Male")) {
+            genderSpinner.setSelection(0);
+        } else {
+            genderSpinner.setSelection(1);
+        }
+        weight.setText(String.valueOf(myCurrentUser.getmWeight()));
+
+        begStart = false;
+    }
+
+    private void saveInfo() {
+        if (!name.getText().toString().isEmpty()) {
+            user.setmName(name.getText().toString());
+        }
+        user.setmGender(genderSpinner.getSelectedItem().toString());
+
+        if (!weight.getText().toString().isEmpty()) {
+            user.setmWeight(Float.parseFloat(weight.getText().toString()));
+        }
+        user.setmId(8);
+        operations.updateUser(user);
+        Toast.makeText(this, "User " + user.getmName() + " has been added successfully", Toast.LENGTH_SHORT).show();
+
+
+        if((!mSavedUser.getmName().equalsIgnoreCase(user.getmName())) && !
+                name.getText().toString().isEmpty()) {
+//            mSavedUser = operations.addUser(user);
+//            operations.updateUser(user);
+            Toast.makeText(this, "User " + user.getmName() + " has been added with mSAVEDUSER", Toast.LENGTH_SHORT).show();
+        } else if (name.getText().toString().isEmpty()) {
+            Toast.makeText(this, "User adding failed! Try again", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this,  "User " + user.getmName() + " was already in the DB. Try again", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+    public void getWeekData() {
+
         List<UserData> weeklyData;
 
         weeklyData = operations.getWeeklyData();
@@ -110,7 +148,7 @@ public class UserProfile extends FragmentActivity {
             totalCalories += data.getmCalories_burned_in_a_week();
         }
 
-        String timeInString = timeToString( (int) totalTime);
+        String timeInString = timeConvert( (int) totalTime);
 
         String distance = String.format(java.util.Locale.US,"%.2f",totalDistance) + " miles";
         String workouts = String.valueOf(totalWorkouts) + " times";
@@ -123,8 +161,7 @@ public class UserProfile extends FragmentActivity {
 
     }
 
-
-    private void getAllData(){
+    public void getAllData() {
 
         List<UserData> allData;
 
@@ -145,7 +182,7 @@ public class UserProfile extends FragmentActivity {
             totalCalories += data.getmCalories_burned_in_a_week();
         }
 
-        String timeInString = timeToString( (int) totalTime);
+        String timeInString = timeConvert( (int) totalTime);
 
         String distance = String.format(java.util.Locale.US,"%.2f",totalDistance) + " miles";
         String workouts = String.valueOf(totalWorkouts) + " times";
@@ -155,49 +192,11 @@ public class UserProfile extends FragmentActivity {
         timeAll.setText(timeInString);
         workoutCountAll.setText(workouts);
         caloriesAll.setText(calories);
-    }
-
-    @Override
-    public void onBackPressed() {
-        operations.close();
-        freshopen = false;
-        finish();
-    }
-
-
-    public void saveInfo(View view) {
-        if (!name.getText().toString().isEmpty()) {
-            user.setmName(name.getText().toString());
-        }
-        user.setmGender(genderSpinner.getSelectedItem().toString());
-
-        if (!weight.getText().toString().isEmpty()) {
-            user.setmWeight(Float.parseFloat(weight.getText().toString()));
-        }
-
-        operations.addUser(user);
-        freshopen = false;
-
-//        if((!mSavedUser.getmName().equalsIgnoreCase(user.getmName())) && !
-//                name.getText().toString().isEmpty()) {
-//            mSavedUser = mUserOps.addUser(newUser);
-//        } else if (nameEditText.getText().toString().isEmpty()) {
-//            TastyToast.makeText(this, "User adding failed! Try again", TastyToast.LENGTH_LONG, TastyToast.ERROR);
-//        } else {
-//            TastyToast.makeText(this, "User " + newUser.getmName() + " was already in the DB. Try again",
-//                    TastyToast.LENGTH_LONG, TastyToast.CONFUSING);
-//        }
 
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        operations.close();
-    }
-
-    private String timeToString (int mins) {
-        int seconds = mins * 60;
+    private String timeConvert(int timeInMinutes) {
+        int seconds = timeInMinutes * 60;
 
         int minutes = (seconds % 3600) / 60;
         int hours = seconds / 3600;

@@ -19,7 +19,7 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ASH KETCHUM"
+            android:hint="Your Name"
             android:id="@+id/userName"
             android:layout_marginTop="@dimen/margLeft"
             android:textSize="@dimen/Heading1"
@@ -185,12 +185,12 @@
 
     </TableLayout>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="SAVE"
-        android:id="@+id/profileSave"
-        android:background="@color/Green"
-        android:onClick="saveInfo"/>
+    <!--<Button-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="SAVE"-->
+        <!--android:id="@+id/profileSave"-->
+        <!--android:background="@color/Green"-->
+        <!--android:onClick="saveInfo"/>-->
 
 </LinearLayout>

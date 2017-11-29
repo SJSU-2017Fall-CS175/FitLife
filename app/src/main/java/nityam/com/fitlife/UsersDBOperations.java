@@ -138,10 +138,15 @@ public class UsersDBOperations {
         return allUserData;
     }
 
-    public Long getLastUser(){
-        Cursor cursor = database.query(UserDBHandler.TABLE_USER_DATA, allUserDataColumns,
-                null,null,null, null, null);
-        cursor.moveToLast();
+    public User getLastUser(){
+        Cursor cursor = database.query(UserDBHandler.TABLE_USERS, allUserColumns,
+                UserDBHandler.COLUMN_ID + "=?",new String[]{String.valueOf(1)},
+                null,null, null, null);
+
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        assert cursor != null;
         User user = new User(Long.parseLong(cursor.getString(0)),
                 cursor.getString(1),
                 cursor.getString(2),
@@ -149,8 +154,9 @@ public class UsersDBOperations {
 
         cursor.close();
 
-        return user.getmId();
+        return user;
     }
+
     //Get a single user
     public User getUser(long id) {
         Cursor cursor = database.query(UserDBHandler.TABLE_USERS, allUserColumns,
