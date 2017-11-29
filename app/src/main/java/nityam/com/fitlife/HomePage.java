@@ -74,7 +74,6 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
 
         mUserData = new UserData();
         mUserOps = new UsersDBOperations(this);
-        mUserOps.open();
         rn = new Random();
 
         df = new DecimalFormat();
@@ -85,13 +84,13 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("<NITYAM>", "onPause: ");
+        Log.d("<NITYAM>homePage", "onPause: ");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d("<NITYAM>", "onStop: ");
+        Log.d("<NITYAM>homePage", "onStop: ");
         sManager.unregisterListener(this, stepSensor);
         handler.removeCallbacks(writeToDBRunnable);
         mUserOps.close();
@@ -103,6 +102,8 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
         super.onResume();
 
         sManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_FASTEST);
+        mUserOps.open();
+        Log.d("<NITYAM>homePage", "onResume: ");
 
     }
     @Override
@@ -148,7 +149,7 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
 
             handler.removeCallbacks(runnable);
             String ans = "Total Workout = "+Integer.toString(Minutes) + "mins " + Integer.toString(Seconds) + " secs";
-            Toast.makeText(this, ans , Toast.LENGTH_LONG).show();
+            Toast.makeText(this, ans , Toast.LENGTH_SHORT).show();
 
             MillisecondTime = 0L ;
             StartTime = 0L ;
@@ -232,7 +233,7 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
 
             final int CALORIES_BURNED_PER_2000_STEPS = 120;
             Float distanceRan = getDistanceRun();
-            Log.d("<NITYAMdistance>", distanceRan.toString());
+            Log.d("<NITYAM>HP_Distance", distanceRan.toString());
             Float workoutTime = 5f;
             numWorkouts++;
             Float workoutCalories = getCalories();

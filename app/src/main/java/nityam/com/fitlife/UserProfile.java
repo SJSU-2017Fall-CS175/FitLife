@@ -2,6 +2,7 @@ package nityam.com.fitlife;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,7 +56,7 @@ public class UserProfile extends FragmentActivity {
 
         sName = name.getText().toString();
 
-        Toast.makeText(this, "Start value: "+ Boolean.toString(begStart), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Start value: "+ Boolean.toString(begStart), Toast.LENGTH_SHORT).show();
 
         mSavedUser = operations.getUser(1);
 //       if(!begStart){
@@ -72,6 +73,7 @@ public class UserProfile extends FragmentActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d("<NITYAM>UProfile", "onDestroy: closing DB operations ");
         operations.close();
     }
 
@@ -111,19 +113,18 @@ public class UserProfile extends FragmentActivity {
         }
         user.setmId(8);
         operations.updateUser(user);
-        Toast.makeText(this, "User " + user.getmName() + " has been added successfully", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "User " + user.getmName() + " updated", Toast.LENGTH_SHORT).show();
 
 
-        if((!mSavedUser.getmName().equalsIgnoreCase(user.getmName())) && !
-                name.getText().toString().isEmpty()) {
-//            mSavedUser = operations.addUser(user);
-//            operations.updateUser(user);
-            Toast.makeText(this, "User " + user.getmName() + " has been added with mSAVEDUSER", Toast.LENGTH_SHORT).show();
-        } else if (name.getText().toString().isEmpty()) {
+//        if((!mSavedUser.getmName().equalsIgnoreCase(user.getmName())) && !
+//                name.getText().toString().isEmpty()) {
+//            Toast.makeText(this, "User " + user.getmName() + " has been added with mSAVEDUSER", Toast.LENGTH_SHORT).show();
+//        } else
+            if (name.getText().toString().isEmpty() || weight.getText().toString().isEmpty())
             Toast.makeText(this, "User adding failed! Try again", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this,  "User " + user.getmName() + " was already in the DB. Try again", Toast.LENGTH_SHORT).show();
-        }
+//        } else {
+//            Toast.makeText(this,  "User " + user.getmName() + " was already in the DB. Try again", Toast.LENGTH_SHORT).show();
+//        }
 
     }
     public void getWeekData() {
