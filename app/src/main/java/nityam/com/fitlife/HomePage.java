@@ -1,19 +1,27 @@
 package nityam.com.fitlife;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +34,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -71,9 +80,9 @@ public class HomePage extends FragmentActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+//                .findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
 
         Configuration config = getResources().getConfiguration();
         if (config.orientation == config.ORIENTATION_LANDSCAPE) {
@@ -94,6 +103,21 @@ public class HomePage extends FragmentActivity implements
 
         df = new DecimalFormat();
         df.setMaximumFractionDigits(2);
+
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE);
+
+        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            SupportMapFragment mFrag = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map));
+            mFrag.getMapAsync(this);
+        }
+
+        mContext = this;
+        mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+        assert mLocationManager != null;
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 10, locationListenerGPS);
+        mLocationList = new ArrayList<>();
 
     }
 
@@ -117,23 +141,87 @@ public class HomePage extends FragmentActivity implements
 
         super.onResume();
 
+
+        Toast.makeText(this,"First launch is "+ Boolean.toString(isFirstLaunch), Toast.LENGTH_SHORT).show();
         sManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_FASTEST);
         mUserOps.open();
         Log.d("<NITYAM>homePage", "onResume: ");
 
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
+//    @Override
+//    public void onMapReady(GoogleMap googleMap) {
+//
+//        mMap = googleMap;
+//        // Add a marker in Sydney and move the camera
+//        LatLng sydney = new LatLng(-34, 151);
+//        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+//
+//        //ask for permission
+//
+//    }
 
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE);
 
-        //ask for permission
+        if ((ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) ||
+                ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
+            mMap.setMyLocationEnabled(true);
+
+        }
+
+        LocationManager locManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        Location l = locManager != null ? locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) : null;
+
+        if (l == null) {
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            String provider = locManager != null ? locManager.getBestProvider(criteria, true) : null;
+            assert locManager != null;
+            l = locManager.getLastKnownLocation(provider);
+
+            if (isFirstLaunch) {
+                isFirstLaunch = false;
+
+                if(l == null){
+                    Log.d("<NITYAM>"," setting new locations");
+                    l = new Location("");//provider name is unnecessary
+                    l.setLatitude(-122.084d);//your coords of course
+                    l.setLongitude(37.4220d);
+                    l.setAltitude(0.0d);
+                }
+
+                googleMap.addMarker(new MarkerOptions().position(
+                        new LatLng(l.getLatitude(), l.getLongitude())).title("Current location"));
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(l.getLatitude(), l.getLongitude()), 16));
+            } else {
+                isFirstLaunch = false;
+                googleMap.moveCamera(CameraUpdateFactory.newLatLng(
+                        new LatLng(l.getLatitude(), l.getLongitude())));
+            }
+
+        } else {
+
+            if (isFirstLaunch) {
+                isFirstLaunch = false;
+                googleMap.addMarker(new MarkerOptions().position(
+                        new LatLng(l.getLatitude(), l.getLongitude())).title("Current location"));
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(l.getLatitude(), l.getLongitude()), 16));
+            } else {
+                isFirstLaunch = false;
+                googleMap.moveCamera(CameraUpdateFactory.newLatLng(
+                        new LatLng(l.getLatitude(), l.getLongitude())));
+            }
+        }
     }
 
     public void uerProfileClicked(View view) {
@@ -168,6 +256,7 @@ public class HomePage extends FragmentActivity implements
             StartTime = SystemClock.uptimeMillis();
             handler.postDelayed(runnable, 0);
 
+            handler.postDelayed(locationChangedRunnable, 20);
             handler.removeCallbacks(writeToDBRunnable);
 
 
@@ -189,10 +278,51 @@ public class HomePage extends FragmentActivity implements
             distance.setText(df.format(getDistanceRun())); //should be on runnable
 
             handler.postDelayed(writeToDBRunnable, 0);
+            handler.removeCallbacks(locationChangedRunnable);
 
             time.setText("0:00:00");
         }
     }
+
+    @NonNull
+    @SuppressWarnings("unused")
+    private Runnable locationChangedRunnable = new Runnable() {
+        public void run() {
+            LocationListener locationListenerGPS = new LocationListener() {
+                @Override
+                public void onLocationChanged(@NonNull android.location.Location location) {
+                    double latitude = location.getLatitude();
+                    double longitude = location.getLongitude();
+
+                    mLocationList.add(new LatLng(latitude, longitude));
+
+                    PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
+                    for (int z = 0; z < mLocationList.size(); z++) {
+                        LatLng point = mLocationList.get(z);
+                        options.add(point);
+                    }
+                    mMap.addPolyline(options);
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+
+                }
+            };
+
+            handler.postDelayed(this, 0);
+        }
+    };
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -285,4 +415,37 @@ public class HomePage extends FragmentActivity implements
         return totalCalories;
     }
 
-    }
+    @NonNull
+    LocationListener locationListenerGPS = new LocationListener() {
+        @Override
+        public void onLocationChanged(@NonNull android.location.Location location) {
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
+
+            mLocationList.add(new LatLng(latitude, longitude));
+
+            PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
+            for (int z = 0; z < mLocationList.size(); z++) {
+                LatLng point = mLocationList.get(z);
+                options.add(point);
+            }
+            mMap.addPolyline(options);
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
+
+}
