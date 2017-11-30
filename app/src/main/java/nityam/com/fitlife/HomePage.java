@@ -1,24 +1,19 @@
 package nityam.com.fitlife;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.Criteria;
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.v4.app.ActivityCompat;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -33,17 +28,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Random;
 
-public class HomePage extends FragmentActivity implements OnMapReadyCallback, SensorEventListener {
-    private final int REQUEST_CODE = 0;
+public class HomePage extends FragmentActivity implements
+        OnMapReadyCallback, SensorEventListener {
 
     private GoogleMap mMap;
+
     private boolean isWorkingOut = false;
     private Button workout;
     private TextView time;
-    int Seconds, Minutes, MilliSeconds ;
-    long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L ;
+    int Seconds, Minutes, MilliSeconds;
+    long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L;
     private long steps = 0;
     UsersDBOperations mUserOps;
 
@@ -59,7 +56,16 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
     Handler handler;
     DecimalFormat df;
 
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private boolean mPermissionDenied = false;
+    private final int REQUEST_CODE = 0;
     private boolean isFirstLaunch = true;
+
+    @Nullable
+    LocationManager mLocationManager;
+    Context mContext;
+    private ArrayList<LatLng> mLocationList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,14 +76,14 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
         mapFragment.getMapAsync(this);
 
         Configuration config = getResources().getConfiguration();
-        if(config.orientation == config.ORIENTATION_LANDSCAPE){
+        if (config.orientation == config.ORIENTATION_LANDSCAPE) {
             gotoDetail(this);
         }
 
         workout = (Button) findViewById(R.id.workout);
-        handler = new Handler() ;
+        handler = new Handler();
         time = (TextView) findViewById(R.id.time);
-        distance=(TextView) findViewById(R.id.distance);
+        distance = (TextView) findViewById(R.id.distance);
 
         sManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         stepSensor = sManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
@@ -116,58 +122,17 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
         Log.d("<NITYAM>homePage", "onResume: ");
 
     }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         mMap = googleMap;
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE);
+        // Add a marker in Sydney and move the camera
+        LatLng sydney = new LatLng(-34, 151);
+        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
-        if ((ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) ||
-                ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-            mMap.setMyLocationEnabled(true);
-
-        }
-
-        LocationManager locManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-        Location l = locManager != null ? locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) : null;
-
-        if (l == null) {
-            Criteria criteria = new Criteria();
-            criteria.setAccuracy(Criteria.ACCURACY_FINE);
-            String provider = locManager != null ? locManager.getBestProvider(criteria, true) : null;
-            assert locManager != null;
-            l = locManager.getLastKnownLocation(provider);
-
-            if (isFirstLaunch) {
-                isFirstLaunch = false;
-                googleMap.addMarker(new MarkerOptions().position(
-                        new LatLng(l.getLatitude(), l.getLongitude())).title("Current location"));
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                        new LatLng(l.getLatitude(), l.getLongitude()), 16));
-            } else {
-                isFirstLaunch = false;
-                googleMap.moveCamera(CameraUpdateFactory.newLatLng(
-                        new LatLng(l.getLatitude(), l.getLongitude())));
-            }
-
-        } else {
-
-            if (isFirstLaunch) {
-                isFirstLaunch = false;
-                googleMap.addMarker(new MarkerOptions().position(
-                        new LatLng(l.getLatitude(), l.getLongitude())).title("Current location"));
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                        new LatLng(l.getLatitude(), l.getLongitude()), 16));
-            } else {
-                isFirstLaunch = false;
-                googleMap.moveCamera(CameraUpdateFactory.newLatLng(
-                        new LatLng(l.getLatitude(), l.getLongitude())));
-            }
-        }
+        //ask for permission
 
     }
 
@@ -202,6 +167,7 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
 
             StartTime = SystemClock.uptimeMillis();
             handler.postDelayed(runnable, 0);
+
             handler.removeCallbacks(writeToDBRunnable);
 
 
@@ -215,18 +181,10 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
 
             handler.removeCallbacks(runnable);
 
-//            this.steps = 67*Minutes + (int)(1.16 * Seconds);
-                this.steps = 67*Seconds + 67*10*Minutes;
+            this.steps = 67*Seconds + 67*10*Minutes;
 
             String ans = "Total Workout = "+Integer.toString(Minutes) + "mins " + Integer.toString(Seconds) + " secs with steps: "+steps;
             Toast.makeText(this, ans , Toast.LENGTH_SHORT).show();
-
-            //randomize steps
-//            this.steps = 10 + rn.nextInt(4000 - 5 +1);//debug
-
-
-
-//            Log.d("<NITYAMsteps++>", Long.toString(steps));
 
             distance.setText(df.format(getDistanceRun())); //should be on runnable
 
@@ -327,4 +285,4 @@ public class HomePage extends FragmentActivity implements OnMapReadyCallback, Se
         return totalCalories;
     }
 
-}
+    }
