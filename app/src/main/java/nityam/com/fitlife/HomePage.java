@@ -250,6 +250,7 @@ public class HomePage extends FragmentActivity implements
             workout.setText("STOP WORKOUT");
             workout.setBackgroundColor(Color.RED);
             workout.setTextColor(Color.WHITE);
+
             isWorkingOut = true;
 
 
@@ -270,7 +271,7 @@ public class HomePage extends FragmentActivity implements
 
             handler.removeCallbacks(runnable);
 
-            this.steps = 67*Seconds + 67*10*Minutes;
+//            this.steps = 67*Seconds + 67*10*Minutes;
 
             String ans = "Total Workout = "+Integer.toString(Minutes) + "mins " + Integer.toString(Seconds) + " secs with steps: "+steps;
             Toast.makeText(this, ans , Toast.LENGTH_SHORT).show();
@@ -336,7 +337,8 @@ public class HomePage extends FragmentActivity implements
 
 
         if (sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
-            steps++;
+            steps+=100;
+            Log.d("<NITYAM>STEPS: ", Long.toString(steps));
         }
     }
 
