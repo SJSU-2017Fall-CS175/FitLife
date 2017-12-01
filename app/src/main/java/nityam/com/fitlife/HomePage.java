@@ -429,7 +429,7 @@ public class HomePage extends FragmentActivity implements
                 LatLng point = mLocationList.get(z);
                 options.add(point);
             }
-//            mMap.addPolyline(options);
+            mMap.addPolyline(options);
         }
 
         @Override
