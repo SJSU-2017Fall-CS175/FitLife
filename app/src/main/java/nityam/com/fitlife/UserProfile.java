@@ -27,9 +27,6 @@ public class UserProfile extends FragmentActivity {
     TextView workoutCountAll;
     boolean begStart = true;
 
-    User mSavedUser;
-
-
     User user;
     UsersDBOperations operations;
 
@@ -57,17 +54,9 @@ public class UserProfile extends FragmentActivity {
 
         sName = name.getText().toString();
 
-//        Toast.makeText(this, "Start value: "+ Boolean.toString(begStart), Toast.LENGTH_SHORT).show();
-
-//        mSavedUser = operations.getUser(1);
-//       if(!begStart){
            getUserInfo();
            getWeekData();
            getAllData();
-//       }
-        //need to add spinner Gender
-
-        // need to read from db as well
 
     }
 
@@ -81,15 +70,10 @@ public class UserProfile extends FragmentActivity {
     @Override
     public void onBackPressed() {
             saveInfo();
-
-//        Intent intent = new Intent(this, Fitness_HomeScreen.class);
-//        startActivity(intent);
-        finish();
+             finish();
     }
 
     private void getUserInfo() {
-//        long number = operations.getLastUser();
-//        Toast.makeText(this, "Last user number: "+Long.toString(number), Toast.LENGTH_SHORT).show();
         User myCurrentUser = null;
        try
        {
@@ -136,18 +120,8 @@ public class UserProfile extends FragmentActivity {
         }
         user.setmId(12);
         operations.updateUser(user);
-        Toast.makeText(this, "User " + user.getmName() + " updated", Toast.LENGTH_SHORT).show();
-
-
-//        if((!mSavedUser.getmName().equalsIgnoreCase(user.getmName())) && !
-//                name.getText().toString().isEmpty()) {
-//            Toast.makeText(this, "User " + user.getmName() + " has been added with mSAVEDUSER", Toast.LENGTH_SHORT).show();
-//        } else
             if (name.getText().toString().isEmpty() || weight.getText().toString().isEmpty())
             Toast.makeText(this, "User adding failed! Try again", Toast.LENGTH_SHORT).show();
-//        } else {
-//            Toast.makeText(this,  "User " + user.getmName() + " was already in the DB. Try again", Toast.LENGTH_SHORT).show();
-//        }
 
     }
     public void getWeekData() {

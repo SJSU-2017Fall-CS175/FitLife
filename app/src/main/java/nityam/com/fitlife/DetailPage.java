@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.CombinedChart;
@@ -31,8 +30,6 @@ public class DetailPage extends FragmentActivity {
     UsersDBOperations mUserOps;
 
     private CombinedChart mChart;
-    private SeekBar mSeekBarX, mSeekBarY;
-    private TextView tvX, tvY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

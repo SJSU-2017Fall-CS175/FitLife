@@ -80,10 +80,6 @@ public class HomePage extends FragmentActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
-//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-//                .findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(this);
-
         Configuration config = getResources().getConfiguration();
         if (config.orientation == config.ORIENTATION_LANDSCAPE) {
             gotoDetail(this);
@@ -141,26 +137,11 @@ public class HomePage extends FragmentActivity implements
 
         super.onResume();
 
-
-        Toast.makeText(this,"First launch is "+ Boolean.toString(isFirstLaunch), Toast.LENGTH_SHORT).show();
         sManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_FASTEST);
         mUserOps.open();
         Log.d("<NITYAM>homePage", "onResume: ");
 
     }
-
-//    @Override
-//    public void onMapReady(GoogleMap googleMap) {
-//
-//        mMap = googleMap;
-//        // Add a marker in Sydney and move the camera
-//        LatLng sydney = new LatLng(-34, 151);
-//        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-//
-//        //ask for permission
-//
-//    }
 
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
@@ -273,9 +254,6 @@ public class HomePage extends FragmentActivity implements
 
 //            this.steps = 67*Seconds + 67*10*Minutes;
 
-            String ans = "Total Workout = "+Integer.toString(Minutes) + "mins " + Integer.toString(Seconds) + " secs with steps: "+steps;
-            Toast.makeText(this, ans , Toast.LENGTH_SHORT).show();
-
             distance.setText(df.format(getDistanceRun())); //should be on runnable
 
             handler.postDelayed(writeToDBRunnable, 0);
@@ -372,10 +350,6 @@ public class HomePage extends FragmentActivity implements
                     + String.format("%02d", Seconds) + ":"
                     + String.format("%03d", MilliSeconds));
 
-
-
-//            distance.setText(df.format(getDistanceRun()));
-
             handler.postDelayed(this, 0);
         }
 
@@ -426,12 +400,14 @@ public class HomePage extends FragmentActivity implements
 
             mLocationList.add(new LatLng(latitude, longitude));
 
-            PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
-            for (int z = 0; z < mLocationList.size(); z++) {
-                LatLng point = mLocationList.get(z);
-                options.add(point);
+            if(isWorkingOut) {
+                PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
+                for (int z = 0; z < mLocationList.size(); z++) {
+                    LatLng point = mLocationList.get(z);
+                    options.add(point);
+                }
+                mMap.addPolyline(options);
             }
-            mMap.addPolyline(options);
         }
 
         @Override
