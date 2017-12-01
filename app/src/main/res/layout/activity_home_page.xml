@@ -68,7 +68,7 @@
             android:textSize="@dimen/Heading1"
             android:text="0:00:00"
             android:id="@+id/time"
-            android:layout_marginLeft="@dimen/margBigLeft2"/>
+            android:layout_marginLeft="75dp"/>
     </LinearLayout>
 
 

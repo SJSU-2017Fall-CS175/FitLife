@@ -59,6 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margLeft"
             android:id="@+id/userWeight"
+            android:inputType="numberDecimal"
             android:text="160"
             />
         <TextView
