@@ -6,7 +6,6 @@
     <string-array name="gender">
         <item>Male</item>
         <item>Female</item>
-        <item>None</item>
     </string-array>
 
     <string name="permission_rationale_location">Access to the location service is required to demonstrate the \'my location\' feature, which shows your current location on the map.</string>
