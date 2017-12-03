@@ -29,6 +29,7 @@ public class UserProfile extends FragmentActivity {
 
     User user;
     UsersDBOperations operations;
+    int currentUserId = 1;
 
 
     @Override
@@ -77,8 +78,8 @@ public class UserProfile extends FragmentActivity {
         User myCurrentUser = null;
        try
        {
-           myCurrentUser = operations.getUser(12);
-           Log.d("<NITYAM>UP_CurrUsr", "getUserInfo: getting id 12");
+           myCurrentUser = operations.getUser(currentUserId);
+           Log.d("<NITYAM>UP_CurrUsr", "getUserInfo: "+Integer.toString(currentUserId));
        }
        catch(Exception e){
            Log.d("<NITYAM>UP_Exec", "getUserInfo: "+e.toString());
@@ -89,6 +90,7 @@ public class UserProfile extends FragmentActivity {
            myCurrentUser.setmWeight(100);
            User done = operations.addUser(myCurrentUser);
            Log.d("<NITYAM>UP_Exec", "adding new user info "+ done.getmId());
+           currentUserId = (int)done.getmId();
         }
         finally {
            if(myCurrentUser!=null) {
@@ -118,7 +120,7 @@ public class UserProfile extends FragmentActivity {
         if (!weight.getText().toString().isEmpty()) {
             user.setmWeight(Float.parseFloat(weight.getText().toString()));
         }
-        user.setmId(12);
+        user.setmId(currentUserId);
         operations.updateUser(user);
             if (name.getText().toString().isEmpty() || weight.getText().toString().isEmpty())
             Toast.makeText(this, "User adding failed! Try again", Toast.LENGTH_SHORT).show();
@@ -208,7 +210,9 @@ public class UserProfile extends FragmentActivity {
         operations.clearUserData();
 
         Toast.makeText(this, "DATA CLEARED", Toast.LENGTH_SHORT).show();
+
         getWeekData();
         getAllData();
+
     }
 }

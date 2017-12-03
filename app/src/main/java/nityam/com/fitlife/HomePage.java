@@ -26,7 +26,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -52,10 +51,9 @@ public class HomePage extends FragmentActivity implements
     long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L;
     private long steps = 0;
     UsersDBOperations mUserOps;
-
-    private int numWorkouts = 0; // update this from db
     private UserData mUserData;
 
+    private int numWorkouts = 0; // update this from db
     private TextView distance;
     Random rn;
 
@@ -240,7 +238,8 @@ public class HomePage extends FragmentActivity implements
 
             handler.postDelayed(locationChangedRunnable, 20);
             handler.removeCallbacks(writeToDBRunnable);
-
+            numWorkouts++;
+            Log.d("<NITYAM>NUMworkout",Integer.toString(numWorkouts));
 
 
         }else{
@@ -315,13 +314,15 @@ public class HomePage extends FragmentActivity implements
 
 
         if (sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
-            steps+=100;
+            steps+=1;
             Log.d("<NITYAM>STEPS: ", Long.toString(steps));
         }
     }
 
     public float getDistanceRun(){
         float distance = (float)(steps*78)/(float)100000;
+//        if(distance < 0.02f)
+//            return 0.02f;
         return distance;
     }
 
@@ -350,6 +351,8 @@ public class HomePage extends FragmentActivity implements
                     + String.format("%02d", Seconds) + ":"
                     + String.format("%03d", MilliSeconds));
 
+            distance.setText(String.format(java.util.Locale.US,"%.2f",getDistanceRun()));
+
             handler.postDelayed(this, 0);
         }
 
@@ -362,7 +365,6 @@ public class HomePage extends FragmentActivity implements
             Float distanceRan = getDistanceRun();
             Log.d("<NITYAM>HP_Distance", distanceRan.toString());
             Float workoutTime = 5f;
-            numWorkouts++;
             Float workoutCalories = getCalories();
 
             mUserData.setmDistance_ran_in_a_week(distanceRan);
@@ -385,7 +387,14 @@ public class HomePage extends FragmentActivity implements
     public float getCalories(){
         //((0.5 * weight ) /1400 ) * total Steps
         //get weight from database, default = 160;
-        int weight = 160;
+        float weight;
+        try {
+            User u = mUserOps.getUser(1);
+            weight = u.getmWeight();
+        }
+        catch (Exception e){
+            weight = 100;
+        }
         float calorie = (float)(0.5 * weight)/1400;
         float totalCalories = calorie * steps;
         return totalCalories;
