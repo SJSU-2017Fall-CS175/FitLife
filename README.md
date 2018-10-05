@@ -1,5 +1,5 @@
 # FitLife
-Workout app that keep tracks of user's activity.
+Workout app that keep tracks of user's activity and recommends the user how to achieve fitness.
 
 ## Features
 - Realtime update of distance
